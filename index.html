@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Leaflet sample</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/0.7.7/leaflet.css">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+        <style>
+       table{
+              border-collapse: collapse;
+              width: 700px;
+              text-align: center;
+          }
+          td,th{
+              border: 1px solid white;
+              padding: 6px;
+              color: white;
+          }
+          tr:hover{
+              background-color: lightblue;
+          }
+          tr:hover td{color: black;}
+          body{
+              margin-top:10px ;
+              background: linear-gradient(rgb(36, 36, 70),rgb(30, 40, 85));
+          }
+          .btn{
+              border-radius: 10px;
+              padding: 6px;
+              box-sizing: border-box;
+              background-color: orange;
+              border: none;
+              box-shadow: 2px 2px 10px black;
+          }
+      </style>
+   </head>                                                                                                 
+   <body>
+       <b style="text-transform: uppercase;color: white;"><mark>click on names to get their locations with custom emojis</mark></b>
+       <table>
+           <tr >
+               <th>Friend Zone</th>
+               <th>city</th>
+               <th>Address</th>
+           </tr>
+           <tr onclick="func1()">
+               <td>Micheal</td>
+               <td>Bengaluru</td>
+               <td>TC palya</td>
+           </tr>
+           <tr onclick="func2()">
+            <td>arjun</td>
+            <td>Bengaluru</td>
+            <td>Thanisandra</td>
+        </tr>
+        <tr  onclick="func3()">
+            <td>chethan</td>
+            <td>Bengaluru</td>
+            <td>Ramamurthy nagar</td>
+        </tr>
+        <tr  onclick="func4()">
+            <td>Rahul</td>
+            <td>Bengaluru</td>
+            <td>Shanti layout</td>
+        </tr>
+        <tr  onclick="func5()">
+            <td>Sanjay</td>
+            <td>Bengaluru</td>
+            <td>Little Flower Hospital</td>
+        </tr>
+        <tr  onclick="func6()">
+            <td>Sam</td>
+            <td>Bengaluru</td>
+            <td>Kamanahalli</td>
+        </tr>
+       </table>
+       <br>
+       <button onclick="accessLocation()" class="btn">get current location</button>
+       <p><b style="color: white;">Accessing current location works on dekstop only.</b></p>
+       <div>
+           <p><b style="color: white;">The red mark <span style="width: 20px;height: 20px;border-radius: 50%;background-color: red;display: inline-block;color: white;"></span>   Indicates corona zone, click on that to see number of cases. And click anywhere on map to get the co-ordinates of.</b></p>
+       </div>
+       <br>
+      <div id = "mapid" style = "width: 700px; height: 500px"></div>
+      <script>
+          
+         var mymap = L.map('mapid').setView([13.0181997939234, 77.70170670347423], 12);  
+         var layerGroups=L.layerGroup().addTo(mymap);
+           // Creating a Layer object
+            var layer= L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoiY2hldGhhbi0xMjMiLCJhIjoiY2tqOHZ5dmM5MTB4MDJxcDV1dmkwZDZtbiJ9.-VE2oQcrxHM57cND33uayQ'
+        }).addTo(mymap);   // Adding layer to the map
+         mymap.addLayer(layer);
+    var hydMarker = new L.Marker([12.944661515283665, 77.67945492957904]);
+         var vskpMarker = new L.Marker([12.930811797049317, 77.67843822454623]);
+         var vjwdMarker = new L.Marker([12.944577728856768, 77.65563534561709]);
+
+         // Creating latlng object
+         var latlngs = [
+            [12.944661515283665, 77.67945492957904],
+            [12.930811797049317, 77.67843822454623],
+            [12.944577728856768, 77.65563534561709]
+         ];
+         var polygon = L.polygon(latlngs, {color: 'red'}); // Creating a polygon
+         
+         // Creating feature group
+         var featureGroup = L.featureGroup([hydMarker, vskpMarker, vjwdMarker, polygon]);
+         featureGroup.setStyle({color:'blue',opacity:.5});
+         featureGroup.bindPopup("FLOOD ZONE").openPopup();
+         featureGroup.addTo(mymap); 
+         
+        // Adding layer group to map
+//custom icons
+var micheal = L.icon({
+    iconUrl: 'https://img.icons8.com/color/48/000000/pug.png',
+    iconSize:     [38, 40], // size of the icon
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor:  [-1, -100] // point from which the popup should open relative to the iconAnchor
+});
+
+var arjun = L.icon({
+    iconUrl: 'https://img.icons8.com/color/48/000000/frog-face--v2.png',
+    iconSize:     [38, 40], // size of the icon
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor:  [-1, -100] // point from which the popup should open relative to the iconAnchor
+});
+
+var chethan = L.icon({
+    iconUrl: 'https://img.icons8.com/color/48/000000/leopard.png',
+    iconSize:     [38, 40], // size of the icon
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor:  [-1, -100] // point from which the popup should open relative to the iconAnchor
+});
+
+var rahul= L.icon({
+    iconUrl: 'https://img.icons8.com/color/48/000000/red-panda.png',
+    iconSize:     [38, 40], // size of the icon
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor:  [-1, -100] // point from which the popup should open relative to the iconAnchor
+});
+
+var sanjay = L.icon({
+    iconUrl: 'https://img.icons8.com/color/48/000000/lion.png',
+    iconSize:     [38, 40], // size of the icon
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor:  [-1, -100] // point from which the popup should open relative to the iconAnchor
+});
+
+var sam = L.icon({
+    iconUrl: 'https://img.icons8.com/color/48/000000/elephant.png',
+    iconSize:     [38, 40], // size of the icon
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor:  [-1, -100] // point from which the popup should open relative to the iconAnchor
+});
+/* var greenIcon = new LeafIcon({iconUrl: 'leaf-green.png'}),
+    redIcon = new LeafIcon({iconUrl: 'leaf-red.png'}),
+    orangeIcon = new LeafIcon({iconUrl: 'leaf-orange.png'}); */
+
+
+         function func1(){
+             /* layerGroups.clearLayers();
+             mymap.closePopup(); */
+             //marker=L.marker([13.01755,77.69506]).addTo(layerGroups)
+              //  marker= L.marker([13.01755,77.69506], {icon: greenIcon}).addTo(mymap).bindPopup("I am a green leaf.");
+                L.marker([13.01755,77.69506], {icon: micheal}).addTo(mymap).bindPopup('iam micheal').openPopup();
+             //marker.bindPopup("Micheal").openPopup();
+         }
+         function func2(){
+            /*  layerGroups.clearLayers();
+             mymap.closePopup(); */
+             //marker=L.marker([13.05773,77.63491]).addTo(layerGroups)
+             L.marker([13.05773,77.63491], {icon: arjun}).addTo(mymap).bindPopup('iam arjun').openPopup();
+
+             //marker.bindPopup("arjun").openPopup();
+         }
+         function func3(){
+             /* layerGroups.clearLayers();
+             mymap.closePopup(); */
+             //marker=L.marker([13.01716,77.67801]).addTo(layerGroups);
+             //marker.bindPopup('chethan').openPopup();
+             L.marker([13.01716,77.67801], {icon: chethan}).addTo(mymap).bindPopup('iam chethan').openPopup();
+
+        }
+        function func4(){
+             /* layerGroups.clearLayers();
+             mymap.closePopup(); */
+             //marker=L.marker([13.01691,77.68732]).addTo(layerGroups);
+             //marker.bindPopup('rahul').openPopup();
+             L.marker([13.01691,77.68732], {icon: rahul}).addTo(mymap).bindPopup('iam rahul').openPopup();
+
+        }
+        function func5(){
+             /* layerGroups.clearLayers();
+             mymap.closePopup(); */
+            // marker=L.marker([13.011251708475326, 77.67718470419487]).addTo(layerGroups);
+            // marker.bindPopup('sam').openPopup();
+             L.marker([13.011251708475326, 77.67718470419487], {icon: sanjay}).addTo(mymap).bindPopup('iam sanjay').openPopup();
+
+        }
+        function func6(){
+             /* layerGroups.clearLayers();
+             mymap.closePopup(); */
+             //marker=L.marker([13.018167987235085, 77.63675421632105]).addTo(layerGroups);
+             //marker.bindPopup('san').openPopup();
+             L.marker([13.018167987235085, 77.63675421632105], {icon: sam}).addTo(mymap).bindPopup('iam sam').openPopup();
+
+        }
+        
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  }
+function showPosition(position) {
+   lat=position.coords.latitude;
+  long=position.coords.longitude;
+  //var marker = L.marker([lat,long]).addTo(mymap);
+}
+function accessLocation()
+        {
+             marker=L.marker([lat,long]).addTo(layerGroups);
+             marker.bindPopup('you are here').openPopup();
+        }
+        
+var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(mymap);
+}
+
+mymap.on('click', onMapClick);
+
+
+function onLocationFound(e) {
+    var radius = e.accuracy;
+
+    L.marker(e.latlng).addTo(mymap)
+        .bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+    L.circle(e.latlng, radius).addTo(mymap);
+}
+mymap.on('locationerror', onLocationError);
+
+function onLocationError(e) {
+    alert(e.message);
+}
+
+mymap.on('locationfound', onLocationFound);
+
+    var circle = L.circle([13.018167987235085, 77.63675421632105], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 500
+}).addTo(mymap);
+circle.bindPopup('800cases');
+
+
+var circle = L.circle([13.019705034220971, 77.70453915943808], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 800
+}).addTo(mymap);
+circle.bindPopup('1300cases');
+
+
+var circle = L.circle([12.871480946649202, 77.58266055292185], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 800
+}).addTo(mymap);
+circle.bindPopup('1900cases');
+
+
+var circle = L.circle([12.938892799162508, 77.74091378195587], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 800
+}).addTo(mymap);
+circle.bindPopup('200cases');
+
+
+var circle = L.circle([12.871480946649202, 77.58266055292185], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 1200
+}).addTo(mymap);
+circle.bindPopup('400cases');
+
+
+var circle = L.circle([13.010800294130991, 77.64746036378769], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 1000
+}).addTo(mymap);
+circle.bindPopup('700cases');
+
+var circle = L.circle([12.961139244167997, 77.63866734785917], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 1000
+}).addTo(mymap);
+circle.bindPopup('790cases');
+
+var circle = L.circle([13.019334073442613, 77.64586873309808], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 600
+}).addTo(mymap);
+circle.bindPopup('560cases');
+
+var circle = L.circle([12.99043458721032, 77.70090628608669], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 600
+}).addTo(mymap);
+circle.bindPopup('450cases');
+
+var circle = L.circle([12.889938283759314, 77.6397697722395], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 900
+}).addTo(mymap);
+circle.bindPopup('450cases');
+
+var circle = L.circle([12.996846635032234, 77.66951379487027], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 600
+}).addTo(mymap);
+circle.bindPopup('450cases');
+
+var circle = L.circle([12.967546247049151, 77.57407358722541], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 300
+}).addTo(mymap);
+circle.bindPopup('690cases');
+
+var circle = L.circle([13.035792618637267, 77.59830190469701], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 700
+}).addTo(mymap);
+circle.bindPopup('20cases');
+
+var circle = L.circle([12.87960742551487, 77.75280982909676], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 550
+}).addTo(mymap);
+circle.bindPopup('1560cases');
+
+var circle = L.circle([12.98651211605851, 77.60796257513653], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 550
+}).addTo(mymap);
+circle.bindPopup('1590cases');
+
+var circle = L.circle([12.970338199694378, 77.74777635522867], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 590
+}).addTo(mymap);
+circle.bindPopup('150cases');
+
+var circle = L.circle([12.992572982672112, 77.65252188137588], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 700
+}).addTo(mymap);
+circle.bindPopup('1780cases');
+      </script>
+      
+   </body>
+   
+</html>
